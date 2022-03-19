@@ -175,7 +175,7 @@ class IncomeGraph(BaseGraph):
 
 
 def main():
-    for agent_attributes in json.load(open("agents-100k.json")):
+    for agent_attributes in json.load(open("program/agents-100k.json")):
         latitude = agent_attributes.pop("latitude")
         longitude = agent_attributes.pop("longitude")
         position = Position(longitude, latitude)
