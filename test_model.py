@@ -1,63 +1,67 @@
 import program.model as script
-# import pytest
+import pytest
 
 # - Agent : 
-#   - modifier un attribut position
-def test_modify_position():
-    agent = script.Agent(3)
-    agent.position = 5
-    assert agent.position == 5
+class Agent:
+    AGENT = script.Agent(30, agreeableness=1)
+    #   - modifier un attribut position
+    def test_modify_position(self):
+        agent = self.AGENT
+        agent.position = 5
+        assert agent.position == 5
         
-#   - récupérer un attribut position
-def test_get_position():
-    agent = script.Agent(30)
-    assert agent.position == 30
+    #   - récupérer un attribut position
+    def test_get_position(self):
+        agent = self.AGENT
+        assert agent.position == 30
     
-#   - assigner un dictionnaire en tant qu'attributs
-def test_set_agent_attributes():
-    agent = script.Agent(3, agreeableness = 1)
-    assert agent.agreeableness == 1
+    #   - assigner un dictionnaire en tant qu'attributs
+    def test_set_agent_attributes(self):
+        agent = self.AGENT
+        assert agent.agreeableness == 1
 
 # - Position :
-#   - modifier un attribut longitude_degrees
-def test_longitude_degrees():
-    position = script.Position(100, 34)
-    assert position.longitude_degrees == 100
-    
-#   - modifier un attribut latitude_degrees
-def test_latitude_degrees():
-    position = script.Position(100, 34)
-    assert position.latitude_degrees == 34
-    
-#   - modifier un attribut longitude_degrees avec une valeur supérieure à 180 renvoie une erreur. 
-# def test_longitude_degrees_range():
-#     with pytest.raises(AssertionError):
-#         position = script.Position(200, 33)
+class Position:
+    POSITION = script.Position(100, 34)
+    #   - modifier un attribut longitude_degrees
+    def test_longitude_degrees(self):
+        position =self.POSITION
+        assert position.longitude_degrees == 100
         
-#   - modifier un attribut latitude_degrees avec une valeur supérieure à 90 renvoie une erreur. 
-# def test_latitude_degrees_range():
-#     with pytest.raises(AssertionError):
-#         position = script.Position(100, 100)
-
-#   - récupérer une latitude
-def test_latitude():
-    position = script.Position(100, 34)
-    # print(position.latitude)
-    assert position.latitude == 0.5934119456780721
+    #   - modifier un attribut latitude_degrees
+    def test_latitude_degrees(self):
+        position = self.POSITION
+        assert position.latitude_degrees == 34
     
-#   - récupérer une longitude
-def test_longitude():
-    position = script.Position(100,34)
-    # print(position.longitude)
-    assert position.longitude == 1.7453292519943295
+    #   - modifier un attribut longitude_degrees avec une valeur supérieure à 180 renvoie une erreur. 
+    def test_longitude_degrees_range(self):
+        with pytest.raises(AssertionError):
+            position = script.Position(200, 33)
 
+    #   - modifier un attribut latitude_degrees avec une valeur supérieure à 90 renvoie une erreur. 
+    def test_latitude_degrees_range(self):
+        with pytest.raises(AssertionError):
+            position = script.Position(100, 100)
+
+    #   - récupérer une latitude
+    def test_latitude(self):
+        position = self.POSITION
+        # print(position.latitude)
+        assert position.latitude == 0.5934119456780721
+        
+    #   - récupérer une longitude
+    def test_longitude(self):
+        position = self.POSITION
+        # print(position.longitude)
+        assert position.longitude == 1.7453292519943295
+
+# - Zone :
 class TestZone:
     POSITION1 = script.Position(100, 33)
     POSITION2 = script.Position(101, 34)
     ZONE = script.Zone(POSITION1, POSITION2)
     AGENT = script.Agent(POSITION1, agreeableness=1)
     
-    # - Zone :
     #   - trouver une zone qui contient une position
     def test_find_zone_that_contains(self):
         found_zone = script.Zone.find_zone_that_contains(self.POSITION1)
