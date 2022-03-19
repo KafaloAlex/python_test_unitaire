@@ -112,8 +112,6 @@ class Zone:
                 top_right_corner = Position(longitude + cls.WIDTH_DEGREES, latitude + cls.HEIGHT_DEGREES)
                 zone = Zone(bottom_left_corner, top_right_corner)
                 cls.ZONES.append(zone)
-
-
 class BaseGraph:
 
     def __init__(self):
@@ -135,6 +133,20 @@ class BaseGraph:
 
     def xy_values(self, zones):
         raise NotImplementedError
+    
+    # Refactor
+    def _stat_by_age(self, zones, property_name): 
+        stat_by_age = defaultdict(float)
+        population_by_age = defaultdict(int)
+
+        for zone in zones:
+            for inhabitant in zone.inhabitants:
+                stat_by_age[inhabitant.age] += getattr(inhabitant, property_name)
+                population_by_age[inhabitant.age] += 1
+
+        x_values = range(0, 100)
+        y_values = [stat_by_age[age] / (population_by_age[age] or 1) for age in range(0, 100)]
+        return x_values, y_values
 
 
 class AgreeablenessGraph(BaseGraph):
@@ -158,21 +170,48 @@ class IncomeGraph(BaseGraph):
         self.title = "Older people have more money"
         self.x_label = "age"
         self.y_label = "income"
-
+        
+    # REfactor
     def xy_values(self, zones):
-        income_by_age = defaultdict(float)
-        population_by_age = defaultdict(int)
-        for zone in zones:
-            for inhabitant in zone.inhabitants:
-                income_by_age[inhabitant.age] += inhabitant.income
-                population_by_age[inhabitant.age] += 1
+        return self._stat_by_age(zones, 'income')
 
-        x_values = range(0, 100)
-        y_values = [income_by_age[age] / (population_by_age[age] or 1) for age in range(0, 100)]
-        return x_values, y_values
+    # def xy_values(self, zones):
+    #     income_by_age = defaultdict(float)
+    #     population_by_age = defaultdict(int)
+    #     for zone in zones:
+    #         for inhabitant in zone.inhabitants:
+    #             income_by_age[inhabitant.age] += inhabitant.income
+    #             population_by_age[inhabitant.age] += 1
+
+    #     x_values = range(0, 100)
+    #     y_values = [income_by_age[age] / (population_by_age[age] or 1) for age in range(0, 100)]
+    #     return x_values, y_values
 
 
+# TDD
+class AgreeablenessPerAgeGraph(BaseGraph):
 
+    def __init__(self):
+        super(AgreeablenessPerAgeGraph, self).__init__()
+        self.title = "Nice people are young"
+        self.x_label = "age"
+        self.y_label = "agreeableness"
+        
+    # REfactor
+    def xy_values(self, zones):
+        return self._stat_by_age(zones, 'agreeableness')    
+
+    # def xy_values(self, zones):
+    #     agreeableness_by_age = defaultdict(float)
+    #     population_by_age = defaultdict(int)
+    #     for zone in zones:
+    #         for inhabitant in zone.inhabitants:
+    #             agreeableness_by_age[inhabitant.age] += inhabitant.agreeableness
+    #             population_by_age[inhabitant.age] += 1
+
+    #     x_values = range(0, 100)
+    #     y_values = [agreeableness_by_age[age] / (population_by_age[age] or 1) for age in range(0, 100)]
+    #     return x_values, y_values
 
 def main():
     for agent_attributes in json.load(open("program/agents-100k.json")):
@@ -188,6 +227,10 @@ def main():
     
     income_graph = IncomeGraph()
     income_graph.show(Zone.ZONES)
+    
+    # TDD
+    agreeableness_per_age_graph = AgreeablenessPerAgeGraph()
+    agreeableness_per_age_graph.show(Zone.ZONES)
 
 if __name__ == "__main__":
     main()
